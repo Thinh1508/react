@@ -10,14 +10,11 @@ class Nav extends Component {
           {/* exact={true} */}
           Home
         </NavLink>
-        <NavLink to="/todos" activeClassName="active">
-          Todos
-        </NavLink>
         <NavLink to="/user" activeClassName="active">
           Users
         </NavLink>
-        <NavLink to="/about" activeClassName="active">
-          About
+        <NavLink to="/todos" activeClassName="active">
+          Todos
         </NavLink>
       </div>
     )

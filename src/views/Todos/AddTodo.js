@@ -28,8 +28,6 @@ class AddTodo extends React.Component {
     this.setState({
       title: "",
     })
-
-    toast.success("Add Success")
   }
 
   render() {

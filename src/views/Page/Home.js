@@ -1,15 +1,10 @@
 import { Component } from "react"
 import logo from "../../assets/images/logo.svg"
-import { withRouter } from "../../withRouter"
+// import { withRouter } from "../../withRouter"
 
 class Home extends Component {
-  //   componentDidMount() {
-  //     setTimeout(() => {
-  //       this.props.navigate("/todos")
-  //     }, 3000)
-  //   }
-
   render() {
+    console.log(this.props)
     return (
       <>
         <img src={logo} className="App-logo" alt="logo" />
@@ -18,7 +13,5 @@ class Home extends Component {
     )
   }
 }
-
-// export default withRouter(Home)
 
 export default Home

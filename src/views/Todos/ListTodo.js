@@ -1,59 +1,32 @@
 import React from "react"
 import AddTodo from "./AddTodo"
-
+import "../../assets/scss/ListTodo.scss"
 import { toast } from "react-toastify"
+
+import { connect } from "react-redux"
 
 class ListTodo extends React.Component {
   state = {
-    listTodos: [
-      {
-        id: "1",
-        title: "react",
-      },
-      {
-        id: "2",
-        title: "nodejs",
-      },
-      {
-        id: "3",
-        title: "next.js",
-      },
-    ],
     editTodo: {},
   }
 
   addNewTodo = (todo) => {
-    //   let currentListTodo = this.state.listTodos
-    //   currentListTodo.push(todo)
-    this.setState({
-      listTodos: [...this.state.listTodos, todo],
-      //   listTodos:currentListTodo
-    })
+    this.props.addTodo(todo)
   }
 
   handleOnClickDeleteTodo = (todo) => {
-    let currentListTodo = this.state.listTodos
-    currentListTodo = currentListTodo.filter((item) => item.id !== todo.id)
-    this.setState({
-      listTodos: currentListTodo,
-    })
-
-    toast.success("Delete Success")
+    this.props.deleteTodo(todo)
   }
 
   handleOnClickEditTodo = (todo) => {
-    let { editTodo, listTodos } = this.state
+    let editTodo = this.state.editTodo
     let isEmptyOjb = Object.keys(editTodo).length === 0
     // save
     if (isEmptyOjb === false && editTodo.id === todo.id) {
-      let newListTodos = [...listTodos]
-      let ojbIndex = newListTodos.findIndex((item) => item.id === todo.id)
-      newListTodos[ojbIndex].title = editTodo.title
       this.setState({
-        listTodos: newListTodos,
         editTodo: {},
       })
-      toast.success("Edit Success")
+      this.props.editTodo(editTodo)
       return
     }
     // edit
@@ -70,12 +43,20 @@ class ListTodo extends React.Component {
     })
   }
 
+  componentDidUpdate() {
+    if (this.props.dataRedux.state.mess.length !== 0) {
+      toast.success(this.props.dataRedux.state.mess)
+      this.props.messTodo()
+    }
+  }
+
   render() {
-    let { listTodos, editTodo } = this.state
+    let listTodos = this.props.dataRedux.state.listTodos
+    let editTodo = this.state.editTodo
     let isEmptyOjb = Object.keys(editTodo).length === 0
     return (
       <>
-        <p>Simple Todo Apps with React.js (Think)</p>
+        <p>Simple todo apps use Redux</p>
         <div className="list-todo-container">
           <AddTodo addNewTodo={this.addNewTodo} />
           <div className="list-todo-content">
@@ -111,7 +92,10 @@ class ListTodo extends React.Component {
                         ? "Save"
                         : "Edit"}
                     </button>
-                    <button onClick={() => this.handleOnClickDeleteTodo(item)}>
+                    <button
+                      className="btn-delete"
+                      onClick={() => this.handleOnClickDeleteTodo(item)}
+                    >
                       delete
                     </button>
                   </div>
@@ -124,4 +108,27 @@ class ListTodo extends React.Component {
   }
 }
 
-export default ListTodo
+const mapStateToProps = (state) => {
+  return {
+    dataRedux: { state },
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteTodo: (todo) => {
+      dispatch({ type: "DELETE_TODO", payload: todo })
+    },
+    addTodo: (todo) => {
+      dispatch({ type: "ADD_TODO", payload: todo })
+    },
+    editTodo: (todo) => {
+      dispatch({ type: "EDIT_TODO", payload: todo })
+    },
+    messTodo: () => {
+      dispatch({ type: "MESS_TODO" })
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListTodo)
