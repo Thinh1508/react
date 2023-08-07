@@ -8,7 +8,7 @@ class Home extends Component {
     return (
       <>
         <img src={logo} className="App-logo" alt="logo" />
-        <div>Welcome to Homepage on Todos with Think</div>
+        <div>Welcome to the Project React with Think</div>
       </>
     )
   }

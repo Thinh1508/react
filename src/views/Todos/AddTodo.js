@@ -40,7 +40,7 @@ class AddTodo extends React.Component {
           onChange={(event) => this.handleOnChangeTitle(event)}
         />
         <button className="btn-add" onClick={this.handleOnClickAddTodo}>
-          add
+          Add
         </button>
       </div>
     )

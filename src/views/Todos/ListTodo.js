@@ -84,20 +84,22 @@ class ListTodo extends React.Component {
                         {index + 1} - {item.title}
                       </span>
                     )}
-                    <button
-                      className="btn-edit"
-                      onClick={() => this.handleOnClickEditTodo(item)}
-                    >
-                      {isEmptyOjb === false && editTodo.id === item.id
-                        ? "Save"
-                        : "Edit"}
-                    </button>
-                    <button
-                      className="btn-delete"
-                      onClick={() => this.handleOnClickDeleteTodo(item)}
-                    >
-                      delete
-                    </button>
+                    <div className="chill-btn">
+                      <button
+                        className="btn-edit"
+                        onClick={() => this.handleOnClickEditTodo(item)}
+                      >
+                        {isEmptyOjb === false && editTodo.id === item.id
+                          ? "Save"
+                          : "Edit"}
+                      </button>
+                      <button
+                        className="btn-delete"
+                        onClick={() => this.handleOnClickDeleteTodo(item)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 )
               })}
