@@ -3,12 +3,17 @@ import React from "react"
 import "../../assets/scss/ListUser.scss"
 import { withRouter } from "../../withRouter"
 import { toast } from "react-toastify"
+import Modal from "./Modal"
 
 class ListUser extends React.Component {
   state = {
     listUsers: [],
     listFind: [],
     checkFind: true,
+    modal: false,
+    user: {},
+    mess: "",
+    action: "",
   }
 
   async componentDidMount() {
@@ -23,9 +28,6 @@ class ListUser extends React.Component {
   }
 
   render() {
-    let dataUsers = this.state.checkFind
-      ? this.state.listUsers
-      : this.state.listFind
     const handleViewDetailUser = (user) => {
       this.props.navigate(`/user/${user.id}`)
     }
@@ -40,12 +42,46 @@ class ListUser extends React.Component {
           listFind: [listUser],
           checkFind: false,
         })
-      } else {
+        return
+      }
+      if (event.target.value) {
         toast.error("Id Not Found")
         this.setState({
           checkFind: true,
         })
+        return
       }
+
+      this.setState({
+        checkFind: true,
+      })
+      return
+    }
+
+    const closeModal = (mess, user) => {
+      if (mess.length === 0) {
+        this.setState({
+          modal: false,
+          mess: mess,
+        })
+        return
+      }
+      if (Object.keys(user).length !== 0) {
+        this.setState({
+          modal: false,
+          mess: mess,
+        })
+        this.setState({
+          listUsers: [...this.state.listUsers, user],
+        })
+        toast.success(this.state.action + " Success")
+        return
+      }
+      this.setState({
+        modal: false,
+        mess: mess,
+      })
+      toast.error(this.state.action + " Fail")
     }
 
     return (
@@ -63,7 +99,17 @@ class ListUser extends React.Component {
               />
             </div>
             <div className="header-option">
-              <button className="btn btn-add">Add User</button>
+              <button
+                className="btn btn-add"
+                onClick={() => {
+                  this.setState({
+                    modal: true,
+                    action: "Add User",
+                  })
+                }}
+              >
+                Add User
+              </button>
               <button className="btn btn-edit">Import</button>
               <button className="btn btn-delete">Export</button>
             </div>
@@ -87,7 +133,18 @@ class ListUser extends React.Component {
                           {user.first_name + " " + user.last_name}
                         </td>
                         <td>
-                          <button className="btn btn-edit">Edit</button>
+                          <button
+                            className="btn btn-edit"
+                            onClick={() => {
+                              this.setState({
+                                modal: true,
+                                user: user,
+                                action: "Edit User",
+                              })
+                            }}
+                          >
+                            Edit
+                          </button>
                           <button className="btn btn-delete">Delete</button>
                         </td>
                       </tr>
@@ -102,7 +159,18 @@ class ListUser extends React.Component {
                           {user.first_name + " " + user.last_name}
                         </td>
                         <td>
-                          <button className="btn btn-edit">Edit</button>
+                          <button
+                            className="btn btn-edit"
+                            onClick={() => {
+                              this.setState({
+                                modal: true,
+                                user: user,
+                                action: "Edit User",
+                              })
+                            }}
+                          >
+                            Edit
+                          </button>
                           <button className="btn btn-delete">Delete</button>
                         </td>
                       </tr>
@@ -111,6 +179,13 @@ class ListUser extends React.Component {
             </tbody>
           </table>
         </div>
+        {this.state.modal && (
+          <Modal
+            user={this.state.user}
+            closeModal={closeModal}
+            action={this.state.action}
+          />
+        )}
       </div>
     )
   }
