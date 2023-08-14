@@ -5,16 +5,24 @@ import axios from "axios"
 
 class Modal extends React.Component {
   state = {
-    user: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      address: "",
-    },
+    user:
+      Object.keys(this.props.user).length !== 0
+        ? this.props.user
+        : {
+            first_name: "",
+            last_name: "",
+            email: "",
+          },
+    valEmail: true,
   }
   render() {
+    const user = this.props.user
     const addUser = async (user) => {
-      let res = await axios.post("https://reqres.in/api/users", user)
+      let res = await axios
+        .post("https://reqres.in/api/users", user)
+        .catch(function (error) {
+          toast.error("Add User Fail")
+        })
       if (res.status === 201) {
         let user = { ...this.state.user, id: res.data.id }
         this.props.closeModal("success", user)
@@ -23,13 +31,31 @@ class Modal extends React.Component {
       this.props.closeModal("error", {})
     }
 
-    const editUser = (user) => {
-      console.log("edit")
+    const editUser = async (user) => {
+      let res = await axios
+        .put(`https://reqres.in/api/users/${this.props.user.id}`, user)
+        .catch(function (error) {
+          toast.error("Edit User Fail")
+        })
+      if (res.status === 200) {
+        let user = {
+          ...this.state.user,
+          id: this.props.user.id,
+          avatar: this.props.user.avatar,
+        }
+        this.props.closeModal("success", user)
+        return
+      }
+      this.props.closeModal("error", {})
     }
 
     const handleClickButton = () => {
-      let { first_name, last_name, email, address } = this.state.user
-      if (!first_name || !last_name || !email || !address) {
+      let { first_name, last_name, email } = this.state.user
+      if (!this.state.valEmail) {
+        toast.error("Error Email Format")
+        return
+      }
+      if (!first_name || !last_name || !email) {
         toast.error("Missing Data")
         return
       }
@@ -45,6 +71,13 @@ class Modal extends React.Component {
       this.setState({
         user: { ...this.state.user, [event.target.name]: event.target.value },
       })
+    }
+
+    const validateEmail = (email) => {
+      if (!email) return true
+      let emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      if (email.match(emailFormat)) return true
+      return false
     }
     return (
       <div className="modal">
@@ -67,6 +100,9 @@ class Modal extends React.Component {
               <input
                 type="text"
                 name="first_name"
+                defaultValue={
+                  Object.keys(user).length !== 0 ? user.first_name : ""
+                }
                 onChange={(event) => handleOnChange(event)}
               />
             </div>
@@ -75,6 +111,9 @@ class Modal extends React.Component {
               <input
                 type="text"
                 name="last_name"
+                defaultValue={
+                  Object.keys(user).length !== 0 ? user.last_name : ""
+                }
                 onChange={(event) => handleOnChange(event)}
               />
             </div>
@@ -83,16 +122,23 @@ class Modal extends React.Component {
               <input
                 type="email"
                 name="email"
-                onChange={(event) => handleOnChange(event)}
+                defaultValue={Object.keys(user).length !== 0 ? user.email : ""}
+                onChange={(event) => {
+                  if (validateEmail(event.target.value)) {
+                    handleOnChange(event)
+                    this.setState({ valEmail: true })
+                  } else this.setState({ valEmail: false })
+                }}
               />
-            </div>
-            <div className="modal-input">
-              <label>Address:</label>
-              <input
-                type="text"
-                name="address"
-                onChange={(event) => handleOnChange(event)}
-              />
+              <span
+                style={{
+                  display: `${
+                    this.state.valEmail === false ? "block" : "none"
+                  } `,
+                }}
+              >
+                Error Email Format
+              </span>
             </div>
           </div>
           <hr />
@@ -105,7 +151,7 @@ class Modal extends React.Component {
               }
               onClick={() => handleClickButton()}
             >
-              Add
+              {this.props.action === "Add User" ? "Add" : "Edit"}
             </button>
             <button
               className="btn"

@@ -1,5 +1,5 @@
 .list-user-content {
-  max-width: 70%;
+  max-width: 40%;
   align-items: flex-start;
   margin: 0 auto;
 
@@ -38,6 +38,11 @@
 
   td {
     cursor: pointer;
+  }
+
+  td:first-child,
+  td:last-child {
+    max-width: 100px;
   }
 
   tr:nth-child(even) {
